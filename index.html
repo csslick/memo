@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charadd="UTF-8">
+	<title>sticky note</title>
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<style>
+		.sticky{
+			position: absolute;
+			left: 50px; top: 50px;
+			width: 250px; height: 300px;
+			font-size: 1em;
+			background: #FFF4B6;
+			border: 1px solid #ccc;
+			margin: 0; padding: 0;
+			padding-bottom: 32px;
+			overflow: hidden;
+		}
+		.sticky > nav{
+			height: 32px;
+			line-height: 32px;
+		}
+		.sticky > nav a{
+			display: inline-block;
+			padding: 0 5px;
+			color: #666;
+			text-decoration: none;
+		}
+		.sticky > nav a:hover{ 
+			color: #FFF4B6;
+			background: #666;
+		}		
+		.sticky > nav > a.add{
+			float: left;
+		}
+		.sticky > nav > .right{
+			float: right; 
+		}
+		.sticky > textarea{
+			margin: 0; padding: 10px;
+			box-sizing: border-box;
+			width: inherit; height: inherit;
+			background: lightyellow;
+			border: none;
+			resize: none;
+		}
+
+		/* 글목록 */
+		.sticky > .footer_nav{
+			position: absolute;
+			left: -100%; top: 0;
+			width: 70%; height: 100%;
+			background: rgba(0, 0, 0, 0.3);
+			box-sizing: border-box;
+			padding-top: 32px;
+			list-style: none;
+			overflow: auto;
+			transition: 0.5s;
+		}
+		.sticky > .footer_nav.active{
+			left: 0%;
+		}		
+		.sticky > .footer_nav li:hover{
+			background: #333; color: white;
+		}
+	</style>
+</head>
+<body>
+
+<script>
+
+	var d = new Date();
+	var time = d.getFullYear() + '-' + d.getMonth()+1 + '-' + d.getDate();
+	var sticky_html = 
+		'<div class="sticky">' +
+			'<nav>' +
+				'<a href="#" class="add"><i class="fa fa-plus"></i></a>' +
+				'<a href="#" class="save"><i class="fa fa-floppy-o"></i></a>' +
+				'<div class="right">' +
+					'<a href="#" class="get"><i class="fa fa-list"></i></a>' +
+					'<a href="#" class="option"><i class="fa fa-cog"></i></a>' +
+					'<a href="#" class="del"><i class="fa fa-trash"></i></a>' +
+				'</div>' +
+			'</nav>' +
+			'<textarea name="txt" class="txt"></textarea><br />' +
+			'<nav class="footer_nav"><ol></ol></nav>' +
+		'</div>';
+
+	// 메모 객체
+	var Sticky ={
+		// 메모 추가 메소드
+		add : function(){
+				var idx = localStorage.length;	// 저장된 글 수
+				var x = $('.sticky').last().css('left'),
+					y = $('.sticky').last().css('top');	
+
+				$('body').append(sticky_html);
+				$('.sticky').last().css({
+					left: parseInt(x) + 250 + 'px',
+					top: y
+				});	
+				console.log(x, ', ' , y);
+		},
+		// 메모 저장 메소드
+		save : function(current_memo){
+				var idx = localStorage.length;	// 저장된 글 수
+
+				// 동적으로 생성된 요소는 직접 참조가 안되므로 this 통해 탐색
+				// 형제 filter()메소드는 작동 안하여 next() 사용
+				var txt = current_memo.val();	// 작성중인 글(동적 참조)
+				console.log(txt);
+				var memo = txt + '\n' + time;
+				console.log(idx);
+				console.log(idx, ', ', memo);
+
+				// 작성된 글이 있으면 저장
+				if(txt){
+					alert('글 저장 완료');
+				localStorage.setItem('memo' + idx, txt);
+		  	}
+		},
+		// 메모 읽기 메소드
+		get : function list_storage(){
+				var key;
+				var l = localStorage.length; // 총 저장소 길이
+				
+				$('.sticky > .footer_nav').find('ol').empty();	// 목록 초기화
+				$('.sticky > .footer_nav').toggleClass('active');
+
+				// 사이드 바에 파일 목록 표시
+				for(var i = 0; i < l; i++){
+					key = localStorage.key(i);
+					// $('#list > ol').append('<li>' + key + '</li>').find('li');
+					$('.sticky > .footer_nav')
+						.find('ol')
+						.append('<li>' + key + '</li>').find('li');
+				}
+			}
+	};	// end Sticky{}
+
+
+	// 메모 추가 버튼
+	$(document).on('click', '.add', function(){
+		var current_memo = $(this).parent().next();	// 작성중인 글(동적 참조)
+		Sticky.add(current_memo);
+	});
+
+	// 메모 쓰기 버튼
+	$(document).on('click', '.save', function(){
+		var current_memo = $(this).parent().next();
+		Sticky.save(current_memo);
+	});
+
+	// 메모 읽기 버튼
+	$(document).on('click', '.get', function(){	
+		var current_memo = $(this).parent().parent().next();
+		Sticky.get(current_memo);	
+	});	
+
+	function init_sticky(){
+		$('body').append(sticky_html);
+	}
+
+	init_sticky();
+
+	// http://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage
+	// https://www.scirra.com/tutorials/1461/how-to-use-the-localstorage-plugin
+	// http://croute.me/419
+	// https://msdn.microsoft.com/ko-kr/library/hh580308(v=vs.85).aspx
+</script>	
+</body>
+</html>
