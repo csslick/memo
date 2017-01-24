@@ -83,7 +83,7 @@
 					'<a href="#" class="del"><i class="fa fa-trash"></i></a>' +
 				'</div>' +
 			'</nav>' +
-			'<textarea name="txt" class="txt"></textarea><br />' +
+			'<textarea name="txt" class="txt"></textarea>' +
 			'<nav class="footer_nav"><ol></ol></nav>' +
 		'</div>';
 
@@ -121,17 +121,17 @@
 		  	}
 		},
 		// 메모 읽기 메소드
-		get : function list_storage(){
+		get : function list_storage(current_memo){
 				var key;
 				var l = localStorage.length; // 총 저장소 길이
 				
 				$('.sticky > .footer_nav').find('ol').empty();	// 목록 초기화
-				$('.sticky > .footer_nav').toggleClass('active');
+				// $('.sticky > .footer_nav').toggleClass('active');
+				current_memo.toggleClass('active');
 
 				// 사이드 바에 파일 목록 표시
 				for(var i = 0; i < l; i++){
 					key = localStorage.key(i);
-					// $('#list > ol').append('<li>' + key + '</li>').find('li');
 					$('.sticky > .footer_nav')
 						.find('ol')
 						.append('<li>' + key + '</li>').find('li');
@@ -154,7 +154,7 @@
 
 	// 메모 읽기 버튼
 	$(document).on('click', '.get', function(){	
-		var current_memo = $(this).parent().parent().next();
+		var current_memo = $(this).parent().parent().next().next();
 		Sticky.get(current_memo);	
 	});	
 
