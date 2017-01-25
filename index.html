@@ -5,6 +5,7 @@
 	<title>sticky note</title>
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- <script src="js/jquery-ui.min.js"></script> -->
 	<style>
 		*{ margin: 0; padding: 0; }
 		#sticky_wrap{
@@ -102,19 +103,19 @@
 		// 메모 추가 메소드
 		add : function(){
 				var idx = localStorage.length;	// 저장된 글 수
-				var x = $('.sticky').last().css('left'),
-					y = $('.sticky').last().css('top');	
 
 				// 창 크기를 구함
-				var win_width = $('sticky_wrap').width(),
-					win_height = $('sticky_wrap').height();
+				var win_width = $('#sticky_wrap').width(),
+					win_height = $('#sticky_wrap').height(),
+					x = Math.random() * win_width;
+					y = Math.random() * win_height;
 				
-
 				$('#sticky_wrap').append(sticky_html);
 				$('.sticky').last().css({
-					left: parseInt(x) + 250 + 'px',
+					left: parseInt(x) + 'px',
 					top: y
 				});	
+				console.log(win_width, ', ', win_height);
 				console.log(x, ', ' , y);
 		},
 		// 메모 저장 메소드
@@ -124,7 +125,6 @@
 				// 동적으로 생성된 요소는 직접 참조가 안되므로 this 통해 탐색
 				// 형제 filter()메소드는 작동 안하여 next() 사용
 				var txt = current_memo.val();	// 작성중인 글(동적 참조)
-				console.log(txt);
 				var memo = txt + '\n' + time;
 				console.log(idx);
 				console.log(idx, ', ', memo);
@@ -141,7 +141,6 @@
 				var l = localStorage.length; // 총 저장소 길이
 				
 				$('.sticky > .footer_nav').find('ol').empty();	// 목록 초기화
-				// $('.sticky > .footer_nav').toggleClass('active');
 				current_memo.toggleClass('active');
 
 				// 사이드 바에 파일 목록 표시
@@ -170,12 +169,50 @@
 
 	// 메모 읽기 버튼
 	$(document).on('click', '.get', function(){	
-		// var current_memo = $(this).parent().parent().next().next();
 		// 현재 버튼의 부모를 경유해서 .footer_nav 선택(동적생성 요소 참조)
 		var current_memo = $(this).parents('.top_nav').siblings('.footer_nav');
 		Sticky.get(current_memo);	
 	});	
 
+
+	/* ---------------------------------------------------------------------- */
+	// 터치 입력
+	// 드래그시 창 표시 우선 순위 설정
+	$(document).on('touchstart mousedown', '.sticky', function(){ // 복수 이벤트 지정
+		var txt = $(this).siblings('.txt');	// 작성중인 글(동적 참조)
+		$('.sticky').css('zIndex', '0');
+		$(this).css('zIndex', '99');	
+	});
+
+	$(document).on('touchstart', '.top_nav', function(){
+			var txt = $(this).siblings('.txt');	// 작성중인 글(동적 참조)
+			txt.val('나를 건드렸군요!');
+			txt.css('background', 'orange');	
+	});
+
+	$(document).on('touchend', '.top_nav', function(){
+			var txt = $(this).siblings('.txt');	// 작성중인 글(동적 참조)
+			txt.val('떼었군요!');
+			txt.css('background', 'white');		
+	});	
+
+	$(document).on('touchmove', '.top_nav', function(e){
+		var $sticky = $(this).parent();	// 메모장 본체
+		var event = e.originalEvent;	// 제이쿼리에서 기존 자바스크립트 이벤트 받을 때 필요
+		var touchobj = event.changedTouches[0]; // 터치 이벤트 위치 감지
+
+		// 현재 손가락 위치
+		var x = parseInt(touchobj.clientX), 
+			y = parseInt(touchobj.clientY),
+			ex = x - 125;
+			ey = y - 16;
+
+		$sticky.css('left', ex + 'px');
+		$sticky.css('top', ey + 'px');
+	});	
+
+
+	/* ---------------------------------------------------------------------- */
 	function init_sticky(){
 		$('#sticky_wrap').append(sticky_html);
 	}
