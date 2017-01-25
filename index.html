@@ -67,6 +67,7 @@
 	</style>
 </head>
 <body>
+	<div id="sticky_wrap"></div>
 
 <script>
 
@@ -74,7 +75,7 @@
 	var time = d.getFullYear() + '-' + d.getMonth()+1 + '-' + d.getDate();
 	var sticky_html = 
 		'<div class="sticky">' +
-			'<nav>' +
+			'<nav class="top_nav">' +
 				'<a href="#" class="add"><i class="fa fa-plus"></i></a>' +
 				'<a href="#" class="save"><i class="fa fa-floppy-o"></i></a>' +
 				'<div class="right">' +
@@ -95,7 +96,8 @@
 				var x = $('.sticky').last().css('left'),
 					y = $('.sticky').last().css('top');	
 
-				$('body').append(sticky_html);
+				// $('body').append(sticky_html);
+				$('#sticky_wrap').append(sticky_html);
 				$('.sticky').last().css({
 					left: parseInt(x) + 250 + 'px',
 					top: y
@@ -154,12 +156,15 @@
 
 	// 메모 읽기 버튼
 	$(document).on('click', '.get', function(){	
-		var current_memo = $(this).parent().parent().next().next();
+		// var current_memo = $(this).parent().parent().next().next();
+		// 현재 버튼의 부모를 경유해서 .footer_nav 선택(동적생성 요소 참조)
+		var current_memo = $(this).parents('.top_nav').siblings('.footer_nav');
 		Sticky.get(current_memo);	
 	});	
 
 	function init_sticky(){
-		$('body').append(sticky_html);
+		// $('body').append(sticky_html);
+		$('#sticky_wrap').append(sticky_html);
 	}
 
 	init_sticky();
