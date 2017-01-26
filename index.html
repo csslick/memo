@@ -5,7 +5,8 @@
 	<title>sticky note</title>
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<!-- <script src="js/jquery-ui.min.js"></script> -->
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/jquery.ui.touch-punch.min.js"></script>
 	<style>
 		*{ margin: 0; padding: 0; }
 		#sticky_wrap{
@@ -19,30 +20,32 @@
 			left: 50px; top: 50px;
 			width: 250px; height: 300px;
 			font-size: 1em;
-			background: #FFF4B6;
+			background: #FEF098;
 			border: 1px solid #ccc;
 			margin: 0; padding: 0;
 			padding-bottom: 32px;
 			overflow: hidden;
+			opacity: 0.8;
 		}
-		.sticky > nav{
+		.sticky:hover{ opacity: 1; }
+		.sticky > .top_nav{
 			height: 32px;
 			line-height: 32px;
 		}
-		.sticky > nav a{
+		.sticky > .top_nav a{
 			display: inline-block;
 			padding: 0 5px;
 			color: #666;
 			text-decoration: none;
 		}
-		.sticky > nav a:hover{ 
+		.sticky > .top_nav a:hover{ 
 			color: #FFF4B6;
 			background: #666;
 		}		
-		.sticky > nav > a.add{
+		.sticky > .top_nav > a.add{
 			float: left;
 		}
-		.sticky > nav > .right{
+		.sticky > .top_nav > .right{
 			float: right; 
 		}
 		.sticky > textarea{
@@ -105,8 +108,8 @@
 				var idx = localStorage.length;	// 저장된 글 수
 
 				// 창 크기를 구함
-				var win_width = $('#sticky_wrap').width(),
-					win_height = $('#sticky_wrap').height(),
+				var win_width = $('#sticky_wrap').width() - 250,
+					win_height = $('#sticky_wrap').height() - 300,
 					x = Math.random() * win_width;
 					y = Math.random() * win_height;
 				
@@ -115,6 +118,9 @@
 					left: parseInt(x) + 'px',
 					top: y
 				});	
+				var $new_sticky = $('.sticky').last();	// 새로 생긴 메모장
+					$new_sticky.css('zIndex', '0');
+					$new_sticky.css('zIndex', '99');	
 				console.log(win_width, ', ', win_height);
 				console.log(x, ', ' , y);
 		},
@@ -176,6 +182,13 @@
 
 
 	/* ---------------------------------------------------------------------- */
+	// PC 드래그 앤 드롭
+	function init_sticky(){
+		$('#sticky_wrap').append(sticky_html);
+	}
+
+
+	/* ---------------------------------------------------------------------- */
 	// 터치 입력
 	// 드래그시 창 표시 우선 순위 설정
 	$(document).on('touchstart mousedown', '.sticky', function(){ // 복수 이벤트 지정
@@ -184,38 +197,33 @@
 		$(this).css('zIndex', '99');	
 	});
 
-	$(document).on('touchstart', '.top_nav', function(){
-			var txt = $(this).siblings('.txt');	// 작성중인 글(동적 참조)
-			txt.val('나를 건드렸군요!');
-			txt.css('background', 'orange');	
-	});
-
-	$(document).on('touchend', '.top_nav', function(){
-			var txt = $(this).siblings('.txt');	// 작성중인 글(동적 참조)
-			txt.val('떼었군요!');
-			txt.css('background', 'white');		
-	});	
-
 	$(document).on('touchmove', '.top_nav', function(e){
 		var $sticky = $(this).parent();	// 메모장 본체
 		var event = e.originalEvent;	// 제이쿼리에서 기존 자바스크립트 이벤트 받을 때 필요
-		var touchobj = event.changedTouches[0]; // 터치 이벤트 위치 감지
+		if(e.type == 'touchmove'){	
+			var touchobj = event.changedTouches[0];	// 터치 이벤트 위치 감지
+		} else if(e.type == 'mousemove'){
+			// 마우스 이벤트 감지
+			var touchobj =  event; 
+		}
 
 		// 현재 손가락 위치
-		var x = parseInt(touchobj.clientX), 
-			y = parseInt(touchobj.clientY),
+		var x = parseInt(touchobj.clientX) || event.clientX, 
+			y = parseInt(touchobj.clientY) || event.clientY,
 			ex = x - 125;
 			ey = y - 16;
 
 		$sticky.css('left', ex + 'px');
 		$sticky.css('top', ey + 'px');
+		console.log(e.type);
 	});	
 
+	// 마우스가 메모장 상단에 위치하면 드래그 활성화
+	$(document).on('mouseover', '.top_nav', function(e, ui){
+		$(this).parent().draggable();
+		console.log('draggable');
+	});
 
-	/* ---------------------------------------------------------------------- */
-	function init_sticky(){
-		$('#sticky_wrap').append(sticky_html);
-	}
 
 	init_sticky();
 
