@@ -169,7 +169,7 @@
 					var getData = $(this).text();
 					var txt = localStorage.getItem(getData);
 					current_memo.toggleClass('active');	// 목록창 닫기
-					current_memo.prev('.txt').text(txt);	// 내용 표시 
+					current_memo.prev('.txt').val(txt);	// 내용 표시
 				});
 
 				// 목록 삭제
@@ -186,31 +186,31 @@
 
 
 	/* ---------------------------------------------------------------------- */
-	// 메모 추가 버튼
+	// 추가 버튼
 	$(document).on('click', '.add', function(){
 		var current_memo = $(this).parent().next();	// 작성중인 글(동적 참조)
 		Sticky.add(current_memo);
 	});
 
-	// 메모 쓰기 버튼
+	// 쓰기 버튼
 	$(document).on('click', '.save', function(){
 		var current_memo = $(this).parent().siblings('.txt'); // 글 영역 선택
 		Sticky.save(current_memo);
 	});
 
-	// 메모 읽기 버튼
+	// 읽기 버튼
 	$(document).on('click', '.get', function(){	
 		// 현재 버튼의 부모를 경유해서 .side_nav 선택(동적생성 요소 참조)
 		var current_memo = $(this).parents('.top_nav').siblings('.side_nav');
 		Sticky.get(current_memo);	
 	});	
 
+	// 삭제  버튼
+	$(document).on('click', '.del', function(){
+		var current_memo = $(this).parents('.sticky').remove();
+		// $(current_memo).not(':first').remove();
+	});
 
-	/* ---------------------------------------------------------------------- */
-	// PC 드래그 앤 드롭
-	function init_sticky(){
-		$('#sticky_wrap').append(sticky_html);
-	}
 
 
 	/* ---------------------------------------------------------------------- */
@@ -219,7 +219,7 @@
 	$(document).on('touchstart mousedown', '.sticky', function(){ // 복수 이벤트 지정
 		var txt = $(this).siblings('.txt');	// 작성중인 글(동적 참조)
 		$('.sticky').css('zIndex', '0');
-		$(this).css('zIndex', '99');	
+		$(this).css('zIndex', '99');
 	});
 
 	$(document).on('touchmove', '.top_nav', function(e){
@@ -250,12 +250,14 @@
 	});
 
 
-	init_sticky();
 
-	// http://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage
-	// https://www.scirra.com/tutorials/1461/how-to-use-the-localstorage-plugin
-	// http://croute.me/419
-	// https://msdn.microsoft.com/ko-kr/library/hh580308(v=vs.85).aspx
+	/* ---------------------------------------------------------------------- */
+	// 메모장 초기화
+	(function (){
+		$('#sticky_wrap').append(sticky_html);
+	})();
+
+
 </script>	
 </body>
 </html>
