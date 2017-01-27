@@ -50,7 +50,7 @@ $(function(){
 				var txt = current_memo.val();	// 작성중인 글(동적 참조)
 
 				// 작성된 글이 있으면 저장
-				if(txt){
+				if(txt !== ''){
 					var key = prompt('저장할 파일명?', '');
 					localStorage.setItem(key, txt);
 		  		}
@@ -163,8 +163,8 @@ $(function(){
 
 	/* ---------------------------------------------------------------------- */
 	// 메모장 초기화
-	(function (){
+	// (function (){
 		$('#sticky_wrap').append(sticky_html);
-	})();
+	// })();
 
 });
