@@ -1,6 +1,5 @@
 $(function(){
-	var d = new Date();
-	var time = d.getFullYear() + '-' + d.getMonth()+1 + '-' + d.getDate();
+
 	var sticky_html = 
 		'<div class="sticky">' +
 			'<nav class="top_nav">' +
@@ -49,7 +48,6 @@ $(function(){
 				// 동적으로 생성된 요소는 직접 참조가 안되므로 this 통해 탐색
 				// 형제 filter()메소드는 작동 안하여 next() 사용
 				var txt = current_memo.val();	// 작성중인 글(동적 참조)
-				var memo = txt + '\n' + time;
 
 				// 작성된 글이 있으면 저장
 				if(txt){
