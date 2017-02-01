@@ -34,9 +34,9 @@ $(function(){
 					left: parseInt(x) + 'px',
 					top: y
 				});	
-// 				var $new_sticky = $('.sticky').last();	// 새로 생긴 메모장
-// 					$new_sticky.css('zIndex', '0');
-// 					$new_sticky.css('zIndex', '99');	
+				var $new_sticky = $('.sticky').last();	// 새로 생긴 메모장
+					$new_sticky.css('zIndex', '0');
+					$new_sticky.css('zIndex', '99');
 				console.log(win_width, ', ', win_height);
 				console.log(x, ', ' , y);
 		},
